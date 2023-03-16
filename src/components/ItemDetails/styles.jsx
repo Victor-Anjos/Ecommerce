@@ -14,7 +14,7 @@ export const ItemAbout = styled.div`
 
   img {
     width: 100%;
-    height: 550px;
+    height: 90%;
     object-fit: cover;
     border: 1px solid #ccc;
     border-radius: 12px;
@@ -27,6 +27,7 @@ export const ItemAbout = styled.div`
 
     img {
       transform: scale(0.9);
+      margin-top: 0;
     }
   }
 `;
@@ -83,8 +84,13 @@ export const ItemAttributes = styled.div`
     }
   }
 
+  @media screen and (min-width: 1180px) {
+    margin-left: 40px;
+  }
+
   @media screen and (max-width: 1180px) {
     padding: 0;
+
     margin-left: 5px;
     width: 540px;
 

@@ -114,6 +114,7 @@ const Modal = ({ onClose, isOpen }) => {
                   required
                   type="email"
                   value={email}
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                   onChange={handleEmailChange}
                 />
 
@@ -127,10 +128,12 @@ const Modal = ({ onClose, isOpen }) => {
               </FormAccount>
               <ButtonContinue
                 onClick={() => {
-                  if (name && email && birth) {
+                  if (name && email && email.includes("@") && birth) {
                     setStep(Steps.ADDRESS);
                   } else {
-                    alert("Por favor, preencha todos os campos");
+                    alert(
+                      "Por favor, preencha todos os campos, incluindo um endereço de email válido"
+                    );
                   }
                 }}
               >
@@ -147,12 +150,15 @@ const Modal = ({ onClose, isOpen }) => {
                 <InputTitle>CEP</InputTitle>
                 <InputData
                   required
-                  type="tel"
+                  type="text"
+                  maxLength="11"
+                  minLength="11"
                   value={cep}
                   onChange={handleCepChange}
                 />
                 <InputTitle>Cidade</InputTitle>
                 <InputData
+                  disabled
                   required
                   type="text"
                   value={cidade}
@@ -160,6 +166,7 @@ const Modal = ({ onClose, isOpen }) => {
                 />
                 <InputTitle>Estado</InputTitle>
                 <InputData
+                  disabled
                   required
                   type="text"
                   value={estado}
@@ -167,6 +174,7 @@ const Modal = ({ onClose, isOpen }) => {
                 />
                 <InputTitle>Bairro</InputTitle>
                 <InputData
+                  disabled
                   required
                   type="text"
                   value={bairro}

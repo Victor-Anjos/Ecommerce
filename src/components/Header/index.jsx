@@ -78,20 +78,24 @@ const Header = () => {
 
           {active && (
             <Busca>
-              {" "}
-              {filteredItems.map((item) => (
-                <div key={item.id}>
-                  <a href="" onClick={() => navigate(`/item/${item.id}`)}>
-                    <span>
-                      <img src={item.imgdata} alt="" />
-                      {item.name} <br />
-                      R${item.price}
-                    </span>
-                  </a>
-                </div>
-              ))}
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item) => (
+                  <div key={item.id}>
+                    <a href="" onClick={() => navigate(`/item/${item.id}`)}>
+                      <span>
+                        <img src={item.imgdata} alt="" />
+                        {item.name} <br />
+                        R${item.price}
+                      </span>
+                    </a>
+                  </div>
+                ))
+              ) : (
+                <span>Nenhum item encontrado.</span>
+              )}
             </Busca>
           )}
+
           <a
             href="#"
             onClick={(e) => {
