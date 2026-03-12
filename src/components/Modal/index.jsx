@@ -1,33 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { FaCheck } from "react-icons/fa";
+import React, { useEffect, useState, useContext } from "react";
+import { FaCheck, FaTimes } from "react-icons/fa";
+import CartContext from "../../context/CartContext";
 
 import {
   ModalContainer,
   ModalInnerContainer,
+  ModalCloseButton,
+  StepIndicator,
+  StepDot,
   Success,
   DataTitle,
   FormAccount,
   SuccessPara,
+  SuccessContainer,
+  SuccessIcon,
   InputData,
   InputTitle,
   ButtonCancel,
   ButtonContinue,
-  Loading,
-  LoadingContainer,
 } from "./styles";
 
 const Steps = {
-  LOADING: "LOADING",
   DATA: "DATA",
   ADDRESS: "ADDRESS",
   SUCCESS: "SUCCESS",
 };
 
-const handleClick = () => {
-  window.location.reload();
+const stepIndex = {
+  [Steps.DATA]: 1,
+  [Steps.ADDRESS]: 2,
+  [Steps.SUCCESS]: 3,
 };
 
 const Modal = ({ onClose, isOpen }) => {
+  const { setCart } = useContext(CartContext);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [birth, setBirth] = useState("");
@@ -35,95 +42,87 @@ const Modal = ({ onClose, isOpen }) => {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [bairro, setBairro] = useState("");
+  const [cepLoading, setCepLoading] = useState(false);
 
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-  };
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handleBirthChange = (e) => {
-    setBirth(e.target.value);
-  };
+  const [step, setStep] = useState(Steps.DATA);
 
   const handleCepChange = (e) => {
-    setCep(e.target.value);
-    const cepValue = e.target.value.replace(/\D/g, "");
+    const value = e.target.value;
+    setCep(value);
+    const cepValue = value.replace(/\D/g, "");
     if (cepValue.length === 8) {
+      setCepLoading(true);
       fetch(`https://viacep.com.br/ws/${cepValue}/json/`)
         .then((response) => response.json())
         .then((data) => {
-          setCidade(data.localidade);
-          setEstado(data.uf);
-          setBairro(data.bairro);
+          if (!data.erro) {
+            setCidade(data.localidade);
+            setEstado(data.uf);
+            setBairro(data.bairro);
+          }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setCepLoading(false));
     }
   };
 
-  const handleCidadeChange = (e) => {
-    setCidade(e.target.value);
+  const handleFinish = () => {
+    setCart([]);
+    localStorage.setItem("cart", JSON.stringify([]));
+    onClose();
   };
 
-  const handleEstadoChange = (e) => {
-    setEstado(e.target.value);
-  };
-
-  const handleBairroChange = (e) => {
-    setBairro(e.target.value);
-  };
-
-  const [step, setStep] = useState(Steps.LOADING);
-
-  useEffect(() => {
-    if (step === Steps.LOADING) {
-      setTimeout(() => setStep(Steps.DATA), 3000);
-    }
-  }, [step]);
+  const currentStepIndex = stepIndex[step];
 
   return (
     isOpen && (
       <ModalContainer>
         <ModalInnerContainer>
-          {step === Steps.LOADING && (
-            <>
-              <DataTitle>Loading</DataTitle>
-              <LoadingContainer>
-                <Loading></Loading>
-              </LoadingContainer>
-              <ButtonCancel onClick={onClose}>Cancelar</ButtonCancel>
-            </>
+          {step !== Steps.SUCCESS && (
+            <ModalCloseButton onClick={onClose} aria-label="Fechar">
+              <FaTimes />
+            </ModalCloseButton>
+          )}
+
+          {step !== Steps.SUCCESS && (
+            <StepIndicator>
+              {[1, 2, 3].map((s) => (
+                <StepDot key={s} $active={currentStepIndex >= s} />
+              ))}
+            </StepIndicator>
           )}
 
           {step === Steps.DATA && (
             <>
-              <DataTitle>Preencha os dados</DataTitle>
+              <DataTitle>Seus Dados</DataTitle>
               <FormAccount>
-                <InputTitle>Nome</InputTitle>
+                <InputTitle htmlFor="name">Nome completo</InputTitle>
                 <InputData
+                  id="name"
                   required
                   type="text"
                   value={name}
-                  onChange={handleNameChange}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="João da Silva"
                 />
 
-                <InputTitle>Email</InputTitle>
+                <InputTitle htmlFor="email">E-mail</InputTitle>
                 <InputData
+                  id="email"
                   required
                   type="email"
                   value={email}
-                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                  onChange={handleEmailChange}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="joao@email.com"
                 />
 
-                <InputTitle>Data de Nascimento</InputTitle>
+                <InputTitle htmlFor="birth">Data de Nascimento</InputTitle>
                 <InputData
+                  id="birth"
                   required
                   type="date"
                   value={birth}
-                  onChange={handleBirthChange}
+                  onChange={(e) => setBirth(e.target.value)}
                 />
               </FormAccount>
               <ButtonContinue
@@ -131,54 +130,61 @@ const Modal = ({ onClose, isOpen }) => {
                   if (name && email && email.includes("@") && birth) {
                     setStep(Steps.ADDRESS);
                   } else {
-                    alert(
-                      "Por favor, preencha todos os campos, incluindo um endereço de email válido"
-                    );
+                    alert("Por favor, preencha todos os campos com dados válidos.");
                   }
                 }}
               >
                 Continuar
               </ButtonContinue>
-              <ButtonCancel onClick={onClose}>Cancelar</ButtonCancel>
             </>
           )}
 
           {step === Steps.ADDRESS && (
             <>
-              <DataTitle>Informe seu Endereço</DataTitle>
+              <DataTitle>Endereço de Entrega</DataTitle>
               <FormAccount>
-                <InputTitle>CEP</InputTitle>
+                <InputTitle htmlFor="cep">CEP</InputTitle>
                 <InputData
+                  id="cep"
                   required
                   type="text"
-                  maxLength="11"
-                  minLength="11"
+                  maxLength="9"
                   value={cep}
                   onChange={handleCepChange}
+                  placeholder="00000-000"
                 />
-                <InputTitle>Cidade</InputTitle>
+
+                <InputTitle htmlFor="cidade">Cidade</InputTitle>
                 <InputData
+                  id="cidade"
                   disabled
                   required
                   type="text"
-                  value={cidade}
-                  onChange={handleCidadeChange}
+                  value={cepLoading ? "Buscando..." : cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                  placeholder="Preenchido automaticamente"
                 />
-                <InputTitle>Estado</InputTitle>
+
+                <InputTitle htmlFor="estado">Estado</InputTitle>
                 <InputData
+                  id="estado"
                   disabled
                   required
                   type="text"
                   value={estado}
-                  onChange={handleEstadoChange}
+                  onChange={(e) => setEstado(e.target.value)}
+                  placeholder="Preenchido automaticamente"
                 />
-                <InputTitle>Bairro</InputTitle>
+
+                <InputTitle htmlFor="bairro">Bairro</InputTitle>
                 <InputData
+                  id="bairro"
                   disabled
                   required
                   type="text"
                   value={bairro}
-                  onChange={handleBairroChange}
+                  onChange={(e) => setBairro(e.target.value)}
+                  placeholder="Preenchido automaticamente"
                 />
               </FormAccount>
               <ButtonContinue
@@ -186,22 +192,33 @@ const Modal = ({ onClose, isOpen }) => {
                   if (cep && estado && cidade && bairro) {
                     setStep(Steps.SUCCESS);
                   } else {
-                    alert("Por favor, preencha todos os campos");
+                    alert("Por favor, insira um CEP válido para preencher o endereço.");
                   }
                 }}
               >
-                Continuar
+                Confirmar Pedido
               </ButtonContinue>
+              <ButtonCancel onClick={() => setStep(Steps.DATA)}>
+                Voltar
+              </ButtonCancel>
             </>
           )}
 
           {step === Steps.SUCCESS && (
             <>
-              <DataTitle>Parabéns</DataTitle>
-              <SuccessPara>Sua compra foi realizada com sucesso</SuccessPara>
-              <Success>{"Status: Concluido"}</Success>
-              <ButtonContinue onClick={handleClick}>
-                Concluir compra
+              <DataTitle>Pedido Confirmado</DataTitle>
+              <SuccessContainer>
+                <SuccessIcon>
+                  <FaCheck />
+                </SuccessIcon>
+                <SuccessPara>
+                  Sua compra foi realizada com sucesso!<br />
+                  Em breve você receberá um e-mail de confirmação.
+                </SuccessPara>
+                <Success>Status: Confirmado</Success>
+              </SuccessContainer>
+              <ButtonContinue onClick={handleFinish}>
+                Concluir
               </ButtonContinue>
             </>
           )}

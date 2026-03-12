@@ -1,38 +1,37 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa";
 import StoreData from "../StoreData";
-import styled from "styled-components";
-
-import { AcessoriesDetails, BuyNow, AccessoriesCard } from "./styles";
+import { AcessoriesDetails, BuyNow, AccessoriesCard, CardOverlay, ImageWrapper } from "./styles";
 
 const Accessories = ({ index }) => {
   const accs = StoreData[index];
   if (!accs) return null;
 
   const { name, imgdata, price } = accs;
-  const [buyNow, setBuyNow] = useState(false);
-
   const navigate = useNavigate();
 
   return (
-    <div
-      onMouseOver={() => setBuyNow(true)}
-      onMouseLeave={() => setBuyNow(false)}
-    >
-      <AccessoriesCard>
-        {buyNow && (
-          <BuyNow onClick={() => navigate(`/item/${index}`)}>
-            Compre Agora
+    <AccessoriesCard onClick={() => navigate(`/item/${index}`)}>
+      <ImageWrapper>
+        <img src={imgdata} alt={name} />
+        <CardOverlay>
+          <BuyNow onClick={(e) => { e.stopPropagation(); navigate(`/item/${index}`); }}>
+            Ver Produto
           </BuyNow>
-        )}
-        <img src={imgdata} alt="" height="100%" width="100%" />
+        </CardOverlay>
+      </ImageWrapper>
 
-        <AcessoriesDetails>
-          <p>{name}</p>
-          <p>R$ {price}</p>
-        </AcessoriesDetails>
-      </AccessoriesCard>
-    </div>
+      <AcessoriesDetails>
+        <div className="card-info">
+          <span className="card-name">{name}</span>
+          <span className="card-price">R$ {price}</span>
+        </div>
+        <div className="card-arrow">
+          <FaArrowRight />
+        </div>
+      </AcessoriesDetails>
+    </AccessoriesCard>
   );
 };
 

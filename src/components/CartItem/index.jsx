@@ -1,22 +1,31 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useContext } from "react";
-import { CartContext } from "../../Routes";
+import CartContext from "../../context/CartContext";
 import { AiTwotoneDelete, AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { FaShoppingCart } from "react-icons/fa";
 import {
+  CartPageWrapper,
+  CartInner,
   CartItemContainer,
   CartTitle,
   BuyNow,
   ItemCart,
-  Result,
-  ResultContent,
   Delete,
+  EmptyCart,
+  CartList,
+  CartListItem,
+  SummaryPanel,
+  SummaryHeader,
+  SummaryTotal,
+  SummaryBody,
+  SummaryRow,
+  SummaryDivider,
 } from "./styles";
 import Modal from "../Modal";
 
 const CartItem = () => {
   const { cart, setCart } = useContext(CartContext);
-  const [quantity, setQuantity] = useState(1);
   const [localCart, setLocalCart] = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -32,21 +41,25 @@ const CartItem = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const handleRemoveItem = (itemId) => {
-    const updatedCart = localCart.filter((item) => item.id !== itemId);
+  const handleRemoveItem = (cartIndex) => {
+    const updatedCart = localCart.filter((_, i) => i !== cartIndex);
     setLocalCart(updatedCart);
     setCart(updatedCart);
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    } else {
-      setQuantity(1);
-    }
   };
 
-  const handleAddItem = (itemId) => {
-    const updatedCart = localCart.map((item) => {
-      if (item.id === itemId) {
-        item.qt++;
+  const handleAddItem = (cartIndex) => {
+    const updatedCart = localCart.map((item, i) => {
+      if (i === cartIndex) return { ...item, qt: Number(item.qt || 1) + 1 };
+      return item;
+    });
+    setLocalCart(updatedCart);
+    setCart(updatedCart);
+  };
+
+  const handleMinusItem = (cartIndex) => {
+    const updatedCart = localCart.map((item, i) => {
+      if (i === cartIndex && Number(item.qt || 1) > 1) {
+        return { ...item, qt: Number(item.qt) - 1 };
       }
       return item;
     });
@@ -54,80 +67,101 @@ const CartItem = () => {
     setCart(updatedCart);
   };
 
-  const handleMinusItem = (itemId) => {
-    const updatedCart = localCart.map((item) => {
-      if (item.id === itemId && item.qt > 1) {
-        item.qt--;
-      }
-      return item;
-    });
-    setLocalCart(updatedCart);
-    setCart(updatedCart);
-  };
+  const parsePrice = (price) => parseFloat(String(price).replace(",", "."));
+
+  const subtotal = localCart.reduce(
+    (acc, item) => acc + parsePrice(item.price) * Number(item.qt || 1),
+    0
+  );
+
+  const totalItems = localCart.reduce((acc, item) => acc + Number(item.qt || 1), 0);
+
+  const formatCurrency = (value) =>
+    value.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
 
   return (
-    <CartItemContainer>
-      <CartTitle>Itens no carrinho</CartTitle>
-      {localCart.length === 0 ? (
-        <ul>
-          <li>
-            <h2>Nenhum item no carrinho</h2>
-          </li>
-        </ul>
-      ) : (
-        <ul>
-          {localCart.map((item) => (
-            <li key={item.id}>
-              <Delete onClick={() => handleRemoveItem(item.id)}>
-                <AiTwotoneDelete />
-              </Delete>
-              <img src={item.imgdata} alt="" />
-              <ItemCart>
-                <span>{item.name}</span>
-                <span>
-                  Qntd: {""}
-                  <button onClick={() => handleMinusItem(item.id, item.qt)}>
-                    <AiOutlineMinus />
-                  </button>
-                  <span>{item.qt}</span>
-                  <button onClick={() => handleAddItem(item.id, item.qt)}>
-                    <AiOutlinePlus />
-                  </button>
-                </span>
-                <span>( R$ {item.price} )</span>
-              </ItemCart>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <Result>
-        <ResultContent>
-          <p>
-            Valor total: R${" "}
-            {localCart.reduce(
-              (acc, item) => acc + parseFloat(item.price) * item.qt,
-              0
+    <CartPageWrapper>
+      <CartInner>
+        {/* Coluna esquerda — lista de itens */}
+        <CartItemContainer>
+          <CartTitle>
+            Meu Carrinho
+            {totalItems > 0 && (
+              <span className="cart-count">{totalItems} {totalItems === 1 ? "item" : "itens"}</span>
             )}
-            ,00
-          </p>
+          </CartTitle>
 
-          <BuyNow
-            onClick={() => setOpen(true)}
-            disabled={
-              localCart.reduce(
-                (acc, item) => acc + parseFloat(item.price),
-                0
-              ) === 0
-            }
-          >
-            Comprar
-          </BuyNow>
+          {localCart.length === 0 ? (
+            <EmptyCart>
+              <FaShoppingCart />
+              <h2>Nenhum item no carrinho</h2>
+            </EmptyCart>
+          ) : (
+            <CartList>
+              {localCart.map((item, index) => (
+                <CartListItem key={index}>
+                  <img src={item.imgdata} alt={item.name} />
+                  <ItemCart>
+                    <span className="item-name">{item.name}</span>
+                    <span className="item-price">R$ {item.price} / unidade</span>
+                    <div className="quantity-controls">
+                      <button onClick={() => handleMinusItem(index)}>
+                        <AiOutlineMinus />
+                      </button>
+                      <span className="qty-number">{item.qt || 1}</span>
+                      <button onClick={() => handleAddItem(index)}>
+                        <AiOutlinePlus />
+                      </button>
+                    </div>
+                  </ItemCart>
+                  <Delete onClick={() => handleRemoveItem(index)} title="Remover item">
+                    <AiTwotoneDelete />
+                  </Delete>
+                </CartListItem>
+              ))}
+            </CartList>
+          )}
+        </CartItemContainer>
 
-          <Modal isOpen={open} onClose={() => setOpen(false)} />
-        </ResultContent>
-      </Result>
-    </CartItemContainer>
+        {/* Coluna direita — resumo do pedido */}
+        <SummaryPanel>
+          <SummaryHeader>
+            <h2>Resumo do Pedido</h2>
+            <SummaryTotal>
+              <span className="currency">R$</span>
+              <span className="amount">{formatCurrency(subtotal)}</span>
+            </SummaryTotal>
+          </SummaryHeader>
+
+          <SummaryBody>
+            <SummaryRow>
+              <span>Subtotal ({totalItems} {totalItems === 1 ? "item" : "itens"})</span>
+              <strong>R$ {formatCurrency(subtotal)}</strong>
+            </SummaryRow>
+            <SummaryRow>
+              <span>Frete</span>
+              <strong style={{ color: "#4caf50" }}>Grátis</strong>
+            </SummaryRow>
+
+            <SummaryDivider />
+
+            <SummaryRow>
+              <span style={{ fontWeight: 700, color: "#111", fontSize: "0.95rem" }}>Total</span>
+              <strong style={{ color: "#111", fontSize: "1rem" }}>R$ {formatCurrency(subtotal)}</strong>
+            </SummaryRow>
+
+            <BuyNow
+              onClick={() => setOpen(true)}
+              disabled={localCart.length === 0}
+            >
+              Finalizar Compra
+            </BuyNow>
+          </SummaryBody>
+        </SummaryPanel>
+      </CartInner>
+
+      <Modal isOpen={open} onClose={() => setOpen(false)} />
+    </CartPageWrapper>
   );
 };
 

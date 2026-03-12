@@ -26,7 +26,7 @@ const StoreData = [
     imgdata: Bolsa1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "120,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 1,
@@ -34,7 +34,7 @@ const StoreData = [
     imgdata: Bolsa2,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "160,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 2,
@@ -42,7 +42,7 @@ const StoreData = [
     imgdata: Bolsa3,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "200,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 3,
@@ -50,7 +50,7 @@ const StoreData = [
     imgdata: Bolsa4,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "240,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 4,
@@ -58,7 +58,7 @@ const StoreData = [
     imgdata: Bolsa5,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "280,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 5,
@@ -66,7 +66,7 @@ const StoreData = [
     imgdata: Bolsa6,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "320,00",
-    qt: "1",
+    qt: 1,
   },
 
   {
@@ -75,7 +75,7 @@ const StoreData = [
     imgdata: Sapato1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "500,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 7,
@@ -83,7 +83,7 @@ const StoreData = [
     imgdata: Sapato2,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "700,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 8,
@@ -91,7 +91,7 @@ const StoreData = [
     imgdata: Sapato3,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "900,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 9,
@@ -99,7 +99,7 @@ const StoreData = [
     imgdata: Sapato4,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "150,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 10,
@@ -107,7 +107,7 @@ const StoreData = [
     imgdata: Sapato5,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "300,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 11,
@@ -115,7 +115,7 @@ const StoreData = [
     imgdata: Sapato6,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "450,00",
-    qt: "1",
+    qt: 1,
   },
 
   {
@@ -124,7 +124,7 @@ const StoreData = [
     imgdata: Acc1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "230,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 13,
@@ -132,7 +132,7 @@ const StoreData = [
     imgdata: Acc2,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "310,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 14,
@@ -140,7 +140,7 @@ const StoreData = [
     imgdata: Acc3,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "390,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 15,
@@ -148,7 +148,7 @@ const StoreData = [
     imgdata: Acc4,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "220,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 16,
@@ -156,7 +156,7 @@ const StoreData = [
     imgdata: Acc5,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "330,00",
-    qt: "1",
+    qt: 1,
   },
   {
     id: 17,
@@ -164,7 +164,7 @@ const StoreData = [
     imgdata: Acc6,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique explicabo incidunt ratione, nesciunt, adipisci recusandae facere nulla.",
     price: "440,00",
-    qt: "1",
+    qt: 1,
   },
 ];
 

@@ -8,8 +8,7 @@ import BagsEcommerce from "./pages/Ecommerce/BagsPage";
 import AccessoriesEcommerce from "./pages/Ecommerce/AccessoriesPage";
 import ItemDetails from "./pages/Item/ItemDetailsPage";
 import ShoppingCart from "./pages/Cart/CartPage";
-
-const CartContext = React.createContext();
+import CartContext from "./context/CartContext";
 
 const TestandoContext = () => {
   const [cart, setCart] = useState([]);

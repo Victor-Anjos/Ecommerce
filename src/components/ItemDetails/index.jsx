@@ -1,48 +1,94 @@
 import React from "react";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { FaTruck, FaArrowLeft } from "react-icons/fa";
 import StoreData from "../StoreData";
-import { CartContext } from "../../Routes";
+import CartContext from "../../context/CartContext";
 
-import { ItemAbout, ItemAttributes, ItemContainer } from "./styles";
+import {
+  ItemPageWrapper,
+  ItemContainer,
+  ImageSection,
+  InfoSection,
+  CategoryTag,
+  ItemName,
+  Divider,
+  PriceBlock,
+  ItemDesc,
+  MetaRow,
+  AddToCartButton,
+  BackButton,
+} from "./styles";
+
+const categoryLabel = (id) => {
+  if (id <= 5) return "Bolsas";
+  if (id <= 11) return "Calçados";
+  return "Acessórios";
+};
 
 const ItemDetails = () => {
   const { id } = useParams();
   const item = StoreData[id];
   const { cart, setCart } = useContext(CartContext);
-
-  const addToCart = () => {
-    setCart([...cart, item]);
-    localStorage.setItem("cart", JSON.stringify(cart));
-  };
-
   const navigate = useNavigate();
 
+  if (!item) return null;
+
+  const addToCart = () => {
+    const exists = cart.findIndex((i) => i.id === item.id);
+    let updatedCart;
+    if (exists >= 0) {
+      updatedCart = cart.map((i, idx) =>
+        idx === exists ? { ...i, qt: Number(i.qt) + 1 } : i
+      );
+    } else {
+      updatedCart = [...cart, { ...item, qt: 1 }];
+    }
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
   return (
-    <div>
-      <ItemContainer>
-        <ItemAbout>
-          <img src={item.imgdata} alt="" />
+    <ItemPageWrapper>
+      <div style={{ width: "100%", maxWidth: "1040px" }}>
+        <BackButton onClick={() => navigate(-1)}>
+          <FaArrowLeft /> Voltar
+        </BackButton>
 
-          <ItemAttributes>
-            <h1>{item.name}</h1>
-            <h2>R$ {item.price}</h2>
-            <p>{item.desc}</p>
+        <ItemContainer>
+          <ImageSection>
+            <img src={item.imgdata} alt={item.name} />
+          </ImageSection>
 
-            <button
+          <InfoSection>
+            <CategoryTag>{categoryLabel(Number(id))}</CategoryTag>
+            <ItemName>{item.name}</ItemName>
+            <Divider />
+
+            <PriceBlock>
+              <span className="price-label">Preço</span>
+              <span className="price-value">R$ {item.price}</span>
+            </PriceBlock>
+
+            <ItemDesc>{item.desc}</ItemDesc>
+
+            <MetaRow>
+              <FaTruck />
+              <span>Frete grátis para todo o Brasil</span>
+            </MetaRow>
+
+            <AddToCartButton
               onClick={() => {
                 addToCart();
                 navigate("/cart");
               }}
             >
               Adicionar ao Carrinho
-            </button>
-          </ItemAttributes>
-        </ItemAbout>
-      </ItemContainer>
-    </div>
+            </AddToCartButton>
+          </InfoSection>
+        </ItemContainer>
+      </div>
+    </ItemPageWrapper>
   );
 };
 
